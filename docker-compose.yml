@@ -1,0 +1,90 @@
+version: '3.8'
+
+services:
+  app-blue:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    container_name: veterinaria-app-blue
+    ports:
+      - "3001:8080"
+    restart: unless-stopped
+    networks:
+      - veterinaria-network
+
+  app-green:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    container_name: veterinaria-app-green
+    ports:
+      - "3002:8080"
+    restart: unless-stopped
+    networks:
+      - veterinaria-network
+
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: veterinaria-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - app-blue
+    restart: unless-stopped
+    networks:
+      - veterinaria-network
+
+  prometheus:
+    image: prom/prometheus:v2.51.0
+    container_name: veterinaria-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      - app-blue
+    restart: unless-stopped
+    networks:
+      - veterinaria-network
+
+  grafana:
+    image: grafana/grafana:10.4.0
+    container_name: veterinaria-grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./monitoring/grafana/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml:ro
+      - ./monitoring/grafana/provisioning/dashboards/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+    networks:
+      - veterinaria-network
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: veterinaria-jenkins
+    user: root
+    privileged: true
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - //var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+    networks:
+      - veterinaria-network
+
+networks:
+  veterinaria-network:
+    driver: bridge
+
+volumes:
+  jenkins_home:

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Clínica Veterinaria</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="login-container">
+    <div class="login-box">
+        <div class="login-logo">
+            <i class="fa-solid fa-paw"></i>
+        </div>
+        <h2>Mascota Feliz</h2>
+        <p>Sistema de Gestión Veterinaria</p>
+        
+        <form action="/login" method="post" class="login-form">
+            <div class="form-group">
+                <label>Usuario</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-user"></i>
+                    <input type="text" name="username" placeholder="Tu usuario" required autofocus>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Contraseña</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" name="password" placeholder="Tu contraseña" required>
+                </div>
+            </div>
+            <button type="submit" class="btn primary login-btn">
+                ACCEDER <i class="fa-solid fa-arrow-right-to-bracket" style="margin-left: 8px;"></i>
+            </button>
+        </form>
+        
+        <div id="error-msg" style="margin-top: 20px; color: var(--danger); font-size: 0.9rem; display: none; font-weight: 600; background: rgba(239, 68, 68, 0.1); padding: 12px; border-radius: 12px; border: 1px solid rgba(239, 68, 68, 0.2);">
+            <i class="fa-solid fa-circle-exclamation"></i> Credenciales incorrectas.
+        </div>
+
+        <div class="login-footer">
+            Modo Demo: <strong>alexis</strong> / <strong>admin</strong>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('error')) {
+            document.getElementById('error-msg').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clínica Veterinaria</title>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar / Navigation -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fa-solid fa-paw"></i>
+                <h2>Veterinaria</h2>
+                <span class="version">v1.0.0</span>
+            </div>
+            
+            <nav class="main-nav">
+                <ul class="nav-links">
+                    <li class="active" data-tab="dashboard"><i class="fa-solid fa-chart-pie"></i> Dashboard</li>
+                    <li data-tab="pets"><i class="fa-solid fa-dog"></i> Mascotas</li>
+                    <li data-tab="services"><i class="fa-solid fa-stethoscope"></i> Servicios</li>
+                    <li data-tab="appointments"><i class="fa-solid fa-calendar-check"></i> Citas</li>
+                </ul>
+            </nav>
+            
+            <div class="monitoring-links">
+                <h4><i class="fa-solid fa-satellite-dish"></i> Monitoreo</h4>
+                <a href="http://localhost:9090" target="_blank" class="monitor-btn prom">
+                    <i class="fa-solid fa-fire"></i> Prometheus
+                </a>
+                <a href="http://localhost:3000" target="_blank" class="monitor-btn graf">
+                    <i class="fa-solid fa-chart-line"></i> Grafana
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-title">
+                    <h1>Mascota Feliz <span style="font-weight: 400; color: var(--text-secondary); font-size: 1rem; margin-left:10px;">| Sistema de Gestión</span></h1>
+                </div>
+                <div class="user-profile">
+                    <div style="text-align: right; margin-right: 15px;">
+                        <span id="user-name" style="display: block; font-weight: 700; color: var(--text-primary);">Alexis</span>
+                        <span style="display: block; font-size: 0.75rem; color: var(--accent); font-weight: 600;">Veterinario Jefe</span>
+                    </div>
+                    <form action="/logout" method="post" style="display: inline;">
+                        <button type="submit" class="btn" style="background: #fee2e2; color: #ef4444; padding: 10px; border-radius: 10px; margin-right: 15px;">
+                            <i class="fa-solid fa-power-off"></i>
+                        </button>
+                    </form>
+                    <img src="https://ui-avatars.com/api/?name=Alexis&background=10b981&color=fff&bold=true" alt="User">
+                </div>
+            </header>
+
+            <!-- Dashboard View -->
+            <section id="dashboard" class="tab-content active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fa-solid fa-dog"></i></div>
+                        <div class="stat-details">
+                            <h3>Pacientes</h3>
+                            <h2 id="st-pets">0</h2>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #f0fdf4; color: #10b981;"><i class="fa-solid fa-kit-medical"></i></div>
+                        <div class="stat-details">
+                            <h3>Servicios</h3>
+                            <h2 id="st-services">0</h2>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #fff7ed; color: #f59e0b;"><i class="fa-solid fa-calendar-check"></i></div>
+                        <div class="stat-details">
+                            <h3>Citas Hoy</h3>
+                            <h2 id="st-apps">0</h2>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #eff6ff; color: #3b82f6;"><i class="fa-solid fa-award"></i></div>
+                        <div class="stat-details">
+                            <h3>Completadas</h3>
+                            <h2 id="st-conf">0</h2>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-hero">
+                    <div class="hero-content">
+                        <h2>¡Hola de nuevo, Alexis!</h2>
+                        <p>Tu clínica está funcionando correctamente. Tienes citas pendientes para hoy. Revisa el panel de control para más detalles.</p>
+                        <button class="btn" style="background: #fff; color: var(--accent); margin-top: 20px;" onclick="document.querySelector('[data-tab=pets]').click()">
+                            Ver Pacientes <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                    <div class="hero-image">
+                        <i class="fa-solid fa-paw"></i>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Mascotas View -->
+            <section id="pets" class="tab-content">
+
+                <div class="section-header">
+                    <h2>Gestión de Pacientes</h2>
+                </div>
+
+                <!-- Nuevo Paciente Form (Horizontal style inspired by screenshot) -->
+                <div class="inline-form-card">
+                    <h3><i class="fa-solid fa-circle-plus"></i> Registrar Nueva Mascota</h3>
+                    <form id="pet-form">
+                        <div class="inline-form-grid">
+                            <div class="form-group">
+                                <label>Nombre</label>
+                                <input type="text" id="pet-name" placeholder="Ej: Bobby" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Especie</label>
+                                <select id="pet-species" required>
+                                    <option value="Perro">Perro</option>
+                                    <option value="Gato">Gato</option>
+                                    <option value="Ave">Ave</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Edad</label>
+                                <input type="number" id="pet-age" placeholder="0" required min="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Dueño</label>
+                                <input type="text" id="pet-owner" placeholder="Nombre dueño" required>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="btn primary full-width">
+                                    <i class="fa-solid fa-paw"></i> Guardar
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Hidden fields or secondary row if needed -->
+                        <div class="inline-form-grid" style="margin-top: 15px; grid-template-columns: 1fr 1fr;">
+                            <div class="form-group">
+                                <label>Raza</label>
+                                <input type="text" id="pet-breed" placeholder="Ej: Beagle">
+                            </div>
+                            <div class="form-group">
+                                <label>Teléfono Contacto</label>
+                                <input type="text" id="pet-phone" placeholder="Ej: 987654321" required>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="table-container">
+                    <div style="padding: 20px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 10px;">
+                        <i class="fa-solid fa-list-ul" style="color: var(--accent);"></i>
+                        <h3 style="font-size: 1.1rem; font-weight: 700;">Lista de Pacientes</h3>
+                    </div>
+                    <table class="glass-table">
+                        <thead>
+                            <tr>
+                                <th># ID</th>
+                                <th>Paciente</th>
+                                <th>Especie</th>
+                                <th>Edad</th>
+                                <th>Dueño</th>
+                                <th>Contacto</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pets-table-body">
+                            <!-- Injected via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Servicios View -->
+            <section id="services" class="tab-content">
+                <div class="section-header">
+                    <h2>Servicios Disponibles</h2>
+                </div>
+                <div class="table-container">
+                    <table class="glass-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Servicio</th>
+                                <th>Precio</th>
+                                <th>Duración</th>
+                                <th>Descripción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="services-table-body">
+                            <!-- Injected via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Citas View -->
+            <section id="appointments" class="tab-content">
+                <div class="section-header">
+                    <h2>Control de Citas</h2>
+                    <button class="btn primary" onclick="openModal('app-modal')"><i class="fa-solid fa-calendar-plus"></i> Agendar Nueva Cita</button>
+                </div>
+                <div class="table-container">
+                    <table class="glass-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Mascota</th>
+                                <th>Servicio</th>
+                                <th>Fecha / Hora</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="app-table-body">
+                            <!-- Injected via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Appointment Modal (Keeping it as modal for complexity) -->
+    <div id="app-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Agendar Nueva Cita</h3>
+                <span class="close" onclick="closeModal('app-modal')" style="cursor: pointer; font-size: 1.5rem;">&times;</span>
+            </div>
+            <form id="app-form">
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label>Seleccionar Paciente</label>
+                    <select id="app-petId" required></select>
+                </div>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label>Tipo de Servicio</label>
+                    <select id="app-serviceId" required></select>
+                </div>
+                <div class="form-group row" style="display: flex; gap: 15px; margin-bottom: 20px;">
+                    <div class="col" style="flex: 1;">
+                        <label>Fecha</label>
+                        <input type="date" id="app-date" required>
+                    </div>
+                    <div class="col" style="flex: 1;">
+                        <label>Hora</label>
+                        <input type="time" id="app-time" required>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 25px;">
+                    <label>Estado Inicial</label>
+                    <select id="app-status">
+                        <option value="pending">Pendiente</option>
+                        <option value="confirmed">Confirmada</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn primary full-width" style="justify-content: center; padding: 16px;">
+                    Confirmar Cita <i class="fa-solid fa-check-double"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <footer class="main-footer">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <p>© 2026 Mascota Feliz. Todos los derechos reservados.</p>
+            <p>Infraestructura: <span class="badge success">Jenkins Pipeline OK</span> | <span id="pipeline-version">v1.2.0</span></p>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
