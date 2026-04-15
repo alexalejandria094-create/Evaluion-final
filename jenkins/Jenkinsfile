@@ -1,0 +1,50 @@
+pipeline {
+    agent any
+
+    environment {
+        // Variables para Docker Registry local o remoto, si se necesita
+        DOCKER_IMAGE = 'veterinaria-app'
+        DOCKER_TAG = "v${env.BUILD_ID}"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Para simplificar este template, asumo checkout del repo donde resida este código
+                checkout scm
+            }
+        }
+        
+        stage('Build & Test Maven') {
+            steps {
+                dir('app') {
+                    // Compila y pasa los tests
+                    sh 'mvn clean package'
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                // Compila la imagen y la tagea con el BUILD_ID y latest
+                sh "docker build -t ${env.DOCKER_IMAGE}:${env.DOCKER_TAG} -t ${env.DOCKER_IMAGE}:latest ./app"
+            }
+        }
+
+        stage('Deploy Local') {
+            steps {
+                // Reinicia las instancias locales de docker-compose
+                sh 'docker-compose up -d --build app'
+            }
+        }
+    }
+    
+    post {
+        always {
+            cleanWs()
+        }
+        failure {
+            echo "El pipeline ha fallado, revisar el rollback procedure si fuera necesario."
+        }
+    }
+}
